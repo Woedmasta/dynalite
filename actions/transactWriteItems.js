@@ -8,9 +8,12 @@ module.exports = function transactWriteItem(store, data, cb) {
     var indexUpdates = {}
 
     async.eachSeries(data.TransactItems, addActions, function (err) {
-        if (err) {
+        if (err) {          
             if (err.body && (/Missing the key/.test(err.body.message) || /Type mismatch for key/.test(err.body.message)))
                 err.body.message = 'The provided key element does not match the schema'
+
+            releaseLocks.forEach(release => release()())
+                  
             return cb(err)
         }
 
@@ -61,7 +64,7 @@ module.exports = function transactWriteItem(store, data, cb) {
         })
     })
 
-    function addActions(transactItem, cb) {
+    function addActions(transactItem, cb) {      
         var options = {}
         var tableName
 
@@ -85,7 +88,7 @@ module.exports = function transactWriteItem(store, data, cb) {
                 var itemDb = store.getItemDb(tableName)
 
                 itemDb.get(key, function(err, oldItem) {
-                    if (oldItem) {
+                    if (oldItem) {                   
                         itemDb.lock(key, function(release) {
                             releaseLocks.push(release)
                         })
@@ -132,7 +135,7 @@ module.exports = function transactWriteItem(store, data, cb) {
                 seenKeys[key] = true
 
                 var itemDb = store.getItemDb(tableName)
-
+                
                 itemDb.lock(key, function(release) {
                     releaseLocks.push(release)
                     itemDb.get(key, function(err, oldItem) {
@@ -176,7 +179,7 @@ module.exports = function transactWriteItem(store, data, cb) {
                 seenKeys[key] = true
 
                 var itemDb = store.getItemDb(tableName)
-
+                
                 itemDb.lock(key, function(release) {
                     releaseLocks.push(release)
                     itemDb.get(key, function(err, oldItem) {
@@ -234,7 +237,7 @@ module.exports = function transactWriteItem(store, data, cb) {
                 seenKeys[key] = true
 
                 var itemDb = store.getItemDb(tableName)
-
+                
                 itemDb.lock(key, function(release) {
                     releaseLocks.push(release)
                     itemDb.get(key, function(err, oldItem) {
