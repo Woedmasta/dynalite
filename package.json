@@ -31,11 +31,10 @@
     "memdown": "^5.1.0",
     "minimist": "^1.2.5",
     "once": "^1.4.0",
-    "subleveldown": "^5.0.1"
+    "subleveldown": "^6.0.1",
+    "leveldown": "^6.1.0"
   },
-  "optionalDependencies": {
-    "leveldown": "^5.6.0"
-  },
+  "optionalDependencies": {},
   "devDependencies": {
     "aws4": "^1.11.0",
     "mocha": "^6.2.3",
